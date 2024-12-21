@@ -1,4 +1,4 @@
-import { fetchEmployees } from "../../api/employee";
+import { fetchEmployees } from "../../../api/employee";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 

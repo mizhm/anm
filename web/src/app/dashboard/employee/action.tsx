@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Edit, Eye, Trash } from "lucide-react";
 import React, { useState } from "react";
-import EditSheet from "../../../components/edit-sheet";
+import {
+  deleteEmployee,
+  Employee,
+  TableEmployee,
+  updateEmployee,
+} from "../../../api/employee";
+import EditSheet from "../../../components/form-sheet";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +17,6 @@ import {
   DialogTrigger,
 } from "../../../components/ui/dialog";
 import { useToast } from "../../../hooks/use-toast";
-import { deleteEmployee } from "../../api/employee";
-import { Employee } from "./columns";
 
 interface ActionButtonsProps {
   employee: Employee;
@@ -24,12 +28,21 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleSave = (updatedEmployee: Employee) => {
-    // Handle save logic here
-    toast({
-      title: "Success",
-      description: "Employee updated successfully!",
-    });
+  const handleSave = async (updatedEmployee: TableEmployee) => {
+    try {
+      console.log(updatedEmployee);
+      await updateEmployee(updatedEmployee);
+      toast({
+        title: "Success",
+        description: "Employee updated successfully!",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to update employee!",
+        variant: "destructive",
+      });
+    }
   };
   const handleDelete = async () => {
     try {
@@ -107,6 +120,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
           employee={employee}
           onClose={() => setIsEditSheetOpen(false)}
           onSave={handleSave}
+          title="Update Employee"
+          description="Update employee information below."
         />
       )}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

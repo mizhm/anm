@@ -21,9 +21,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React from "react";
+import { UserPlus } from "lucide-react";
+import React, { useState } from "react";
+import { TableEmployee, createEmployee } from "../../../api/employee";
+import EditSheet from "../../../components/form-sheet";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,9 +38,10 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -60,9 +65,44 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const { toast } = useToast();
+
+  const handleSave = async (newEmployee: TableEmployee) => {
+    try {
+      await createEmployee(newEmployee);
+      toast({
+        title: "Success",
+        description: "Employee created successfully!",
+      });
+      setIsEditSheetOpen(false);
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to create employee!",
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsEditSheetOpen(true)}
+          className="text-green-700 border-green-700 hover:bg-green-700 hover:text-white"
+        >
+          <UserPlus className="h-4 w-4" />
+          Add new employee
+        </Button>
+        {isEditSheetOpen && (
+          <EditSheet
+            onClose={() => setIsEditSheetOpen(false)}
+            onSave={handleSave}
+            title="Add Employee"
+            description="Add a new employee to the database."
+          />
+        )}
         <Input
           placeholder="Filter by name..."
           value={
@@ -86,7 +126,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -105,7 +145,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

@@ -38,6 +38,7 @@ export class EmployeeService {
       ...data,
       salary: data.salary ? encrypt(data.salary) : undefined,
       idNumber: data.idNumber ? encrypt(data.idNumber) : undefined,
+      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
     };
 
     await db.update(employees).set(encryptedData).where(eq(employees.id, id));
