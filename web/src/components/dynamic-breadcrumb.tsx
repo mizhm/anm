@@ -31,9 +31,11 @@ export function DynamicBreadCrumb() {
             return (
               <React.Fragment key={index}>
                 <BreadcrumbItem>
-                  <Link href={`/${pathNames.slice(0, index + 1).join("/")}`}>
-                    <BreadcrumbLink>{link}</BreadcrumbLink>
-                  </Link>
+                  <BreadcrumbLink asChild>
+                    <Link href={`/${pathNames.slice(0, index + 1).join("/")}`}>
+                      {link}
+                    </Link>
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
               </React.Fragment>

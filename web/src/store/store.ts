@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Employee } from "../api/employee";
+import { Employee } from "../app/api/employee";
 
 interface EmployeeStore {
   employees: Employee[];

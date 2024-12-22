@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Edit, Eye, Trash } from "lucide-react";
 import React, { useState } from "react";
-import {
-  deleteEmployee,
-  Employee,
-  TableEmployee,
-  updateEmployee,
-} from "../../../api/employee";
 import EditSheet from "../../../components/form-sheet";
 import {
   Dialog,
@@ -18,6 +12,12 @@ import {
 } from "../../../components/ui/dialog";
 import { useToast } from "../../../hooks/use-toast";
 import useEmployeeStore from "../../../store/store";
+import {
+  deleteEmployee,
+  Employee,
+  TableEmployee,
+  updateEmployee,
+} from "../../api/employee";
 
 interface ActionButtonsProps {
   employee: Employee;

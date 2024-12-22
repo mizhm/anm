@@ -2,8 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { Employee } from "../../../api/employee";
 import { Button } from "../../../components/ui/button";
+import { Employee } from "../../api/employee";
 import ActionButtons from "./action";
 
 export const columns: ColumnDef<Employee>[] = [

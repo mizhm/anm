@@ -1,16 +1,18 @@
 "use client";
 
-import { FileUser, Home, LifeBuoy, Send, X } from "lucide-react";
+import { FileUser, Home, X } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { NavUser } from "./nav-user";
 
 // This is sample data.
 const data = {
@@ -33,18 +35,6 @@ const data = {
       isActive: true,
     },
   ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -64,10 +54,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <NavSecondary items={data.navSecondary} />
+      <SidebarFooter>
         <NavUser user={data.user} />
-      </SidebarFooter> */}
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

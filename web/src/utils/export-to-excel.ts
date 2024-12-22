@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import { Employee } from "../api/employee";
+import { Employee } from "../app/api/employee";
 
 export const exportToExcel = (employees: Employee[], fileName: string) => {
   const worksheet = XLSX.utils.json_to_sheet(employees);
