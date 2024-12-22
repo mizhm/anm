@@ -4,5 +4,9 @@ import { DataTable } from "./data-table";
 
 export default async function Page() {
   const employees = await fetchEmployees();
-  return <DataTable initData={employees} columns={columns} />;
+  return (
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <DataTable initData={employees} columns={columns} />
+    </div>
+  );
 }

@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus } from "lucide-react";
+import { FileDown, UserPlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import {
   createEmployee,
@@ -34,6 +34,7 @@ import EditSheet from "../../../components/form-sheet";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import useEmployeeStore from "../../../store/store";
+import { exportToExcel } from "../../../utils/export-to-excel";
 
 interface DataTableProps {
   columns: ColumnDef<Employee, unknown>[];
@@ -96,7 +97,7 @@ export function DataTable({ columns, initData }: DataTableProps) {
   };
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 gap-2">
+      <div className="flex items-center py-4 gap-2 w-full">
         <Button
           variant="outline"
           size="sm"
@@ -114,6 +115,15 @@ export function DataTable({ columns, initData }: DataTableProps) {
             description="Add a new employee to the database."
           />
         )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => exportToExcel(employees, "Employees")}
+          className="text-blue-700 border-blue-700 hover:bg-blue-700 hover:text-white"
+        >
+          <FileDown className="h-4 w-4" />
+          Export data to excel
+        </Button>
         <Input
           placeholder="Filter by name..."
           value={
@@ -122,7 +132,7 @@ export function DataTable({ columns, initData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("fullName")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm ml-auto"
         />
       </div>
       <div className="rounded-md border">
