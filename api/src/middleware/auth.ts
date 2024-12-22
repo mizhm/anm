@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from 'src/utils/jwt';
+import { NextFunction, Request, Response } from 'express';
+import { verifyToken } from '../utils/jwt';
 
 declare global {
   namespace Express {
@@ -13,18 +13,21 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.split(' ')[1];
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const user = verifyToken(token);
+    if (!user) {
+      throw new Error('Invalid token');
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  const user = verifyToken(token);
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-
-  req.user = user;
-  return next();
 };
-

@@ -9,7 +9,6 @@ export class UserService {
       .select()
       .from(users)
       .where(eq(users.username, username));
-    console.log(username, password);
     if (await argon2.verify(result[0].password, password)) {
       return result[0] || null;
     }
