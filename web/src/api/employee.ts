@@ -65,9 +65,11 @@ export async function updateEmployee(employee: TableEmployee): Promise<void> {
   }
 }
 
-export async function deleteEmployee(employeeId: string): Promise<void> {
+export async function deleteEmployee(employeeId: number): Promise<void> {
   try {
-    await axios.delete(`http://localhost:4000/api/employees/${employeeId}`);
+    await axios.delete(
+      `http://localhost:4000/api/employees/${employeeId.toString()}`,
+    );
   } catch (error) {
     console.error("Failed to delete employee:", error);
   }

@@ -17,12 +17,14 @@ import {
   DialogTrigger,
 } from "../../../components/ui/dialog";
 import { useToast } from "../../../hooks/use-toast";
+import useEmployeeStore from "../../../store/store";
 
 interface ActionButtonsProps {
   employee: Employee;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
+  const { updateEmployeeState, deleteEmployeeState } = useEmployeeStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
@@ -30,13 +32,16 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
 
   const handleSave = async (updatedEmployee: TableEmployee) => {
     try {
-      console.log(updatedEmployee);
       await updateEmployee(updatedEmployee);
+      updatedEmployee = { ...updatedEmployee, id: employee.id };
+      updateEmployeeState(updatedEmployee as Employee);
+      setIsEditSheetOpen(false);
       toast({
         title: "Success",
         description: "Employee updated successfully!",
       });
     } catch {
+      setIsEditSheetOpen(false);
       toast({
         title: "Error",
         description: "Failed to update employee!",
@@ -47,6 +52,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
   const handleDelete = async () => {
     try {
       await deleteEmployee(employee.id);
+      deleteEmployeeState(employee.id);
       toast({
         title: "Success",
         description: "Employee deleted successfully!",

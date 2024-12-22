@@ -21,33 +21,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
-import React, { useState } from "react";
-import { TableEmployee, createEmployee } from "../../../api/employee";
+import React, { useEffect, useState } from "react";
+import {
+  createEmployee,
+  Employee,
+  fetchEmployees,
+  TableEmployee,
+} from "../../../api/employee";
 import EditSheet from "../../../components/form-sheet";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import useEmployeeStore from "../../../store/store";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<Employee, unknown>[];
+  initData: Employee[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable({ columns, initData }: DataTableProps) {
+  const { employees, setEmployees } = useEmployeeStore();
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  useEffect(() => {
+    setEmployees(initData);
+  }, [setEmployees, initData]);
+
   const table = useReactTable({
-    data,
+    data: employees,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -74,6 +83,8 @@ export function DataTable<TData, TValue>({
         title: "Success",
         description: "Employee created successfully!",
       });
+      const updatedData = await fetchEmployees();
+      setEmployees(updatedData);
       setIsEditSheetOpen(false);
     } catch {
       toast({
@@ -126,7 +137,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -145,7 +156,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
