@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { encrypt } from '../utils/encryption';
 import { db } from './index';
-import { employees } from './schema';
+import { employees, users } from './schema';
+import * as argon2 from 'argon2';
 
 export async function runSeed() {
   const employeeData = Array.from({ length: 20 }, () => ({
@@ -22,5 +23,16 @@ export async function runSeed() {
   await db.delete(employees);
   await db.insert(employees).values(employeeData);
 
+  const userData = [
+    {
+      username: 'admin',
+      password: await argon2.hash('123456'),
+    },
+    {
+      username: 'user',
+      password: await argon2.hash('123456'),
+    },
+  ];
+  await db.insert(users).values(userData);
   console.log('Seeding completed.');
 }

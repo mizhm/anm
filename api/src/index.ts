@@ -1,6 +1,7 @@
 import cors from 'cors';
 import 'dotenv/config';
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
+import authRoutes from './routes/auth.routes';
 import employeeRoutes from './routes/employee.routes';
 
 async function main() {
@@ -8,10 +9,9 @@ async function main() {
   // await runSeed();
   app.use(cors());
   app.use(express.json());
+
   app.use('/api', employeeRoutes);
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
-  });
+  app.use('/api', authRoutes);
 
   app.listen(process.env.PORT || 4000, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:4000`);
