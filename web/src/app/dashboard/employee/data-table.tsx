@@ -32,9 +32,9 @@ import { exportToExcel } from "../../../utils/export-to-excel";
 import {
   createEmployee,
   Employee,
-  fetchEmployees,
+  fetchEmployeesClient,
   TableEmployee,
-} from "../../api/employee";
+} from "./service";
 
 interface DataTableProps {
   columns: ColumnDef<Employee, unknown>[];
@@ -84,7 +84,7 @@ export function DataTable({ columns, initData }: DataTableProps) {
         title: "Success",
         description: "Employee created successfully!",
       });
-      const updatedData = await fetchEmployees();
+      const updatedData = await fetchEmployeesClient();
       setEmployees(updatedData);
       setIsEditSheetOpen(false);
     } catch {

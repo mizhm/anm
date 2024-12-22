@@ -1,6 +1,6 @@
-import { fetchEmployees } from "../../api/employee";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
+import { fetchEmployees } from "./service";
 
 export default async function Page() {
   const employees = await fetchEmployees();

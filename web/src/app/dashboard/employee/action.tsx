@@ -17,7 +17,7 @@ import {
   Employee,
   TableEmployee,
   updateEmployee,
-} from "../../api/employee";
+} from "./service";
 
 interface ActionButtonsProps {
   employee: Employee;

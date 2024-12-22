@@ -1,5 +1,11 @@
 import axios from "axios";
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
+import NextAuth, {
+  DefaultSession,
+  DefaultUser,
+  Session,
+  User,
+} from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 declare module "next-auth" {
@@ -11,12 +17,12 @@ declare module "next-auth" {
   }
 }
 
-const handler = NextAuth({
+export const authOptions = {
   pages: {
     signIn: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   providers: [
     CredentialsProvider({
@@ -46,17 +52,18 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
         token.accessToken = user.token;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       session.accessToken = token.accessToken as string;
       return session;
     },
   },
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

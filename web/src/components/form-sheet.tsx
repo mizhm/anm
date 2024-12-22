@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Employee, TableEmployee } from "../app/api/employee";
+import { Employee, TableEmployee } from "../app/dashboard/employee/service";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
