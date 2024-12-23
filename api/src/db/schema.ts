@@ -1,6 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
-  date,
   int,
   mysqlTable,
   text,
@@ -10,6 +9,7 @@ import {
 
 export const users = mysqlTable('users', {
   id: int('id').primaryKey().autoincrement(),
+  fullName: varchar('full_name', { length: 255 }).notNull(),
   username: varchar('username', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   role: varchar('role', { length: 50 }).default('user'),
@@ -18,15 +18,18 @@ export const users = mysqlTable('users', {
 
 export const employees = mysqlTable('employees', {
   id: int('id').primaryKey().autoincrement(),
-  fullName: varchar('full_name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  phone: varchar('phone', { length: 20 }),
-  position: varchar('position', { length: 100 }),
-  department: varchar('department', { length: 100 }),
-  salary: text('salary_encrypted'),
-  idNumber: text('id_number_encrypted'),
-  address: text('address'),
-  dateOfBirth: date('date_of_birth'),
+  fullName: text('full_name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  position: text('position').notNull(),
+  department: text('department').notNull(),
+  gender: text('gender').notNull(),
+  experienceYears: text('experience_years').notNull(),
+  joinYear: text('join_year').notNull(),
+  salary: text('salary').notNull(),
+  idNumber: text('id_number').notNull(),
+  address: text('address').notNull(),
+  dateOfBirth: text('date_of_birth').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });

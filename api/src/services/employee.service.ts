@@ -1,16 +1,16 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { Employee, employees, NewEmployee } from '../db/schema';
-import { decrypt, encrypt } from '../utils/encryption';
+import {
+  decryptFieldInObject,
+  encryptFieldInObject,
+} from '../utils/encryption';
 
+//TODO: fix service for adapting new field in db
 export class EmployeeService {
   async findAll(): Promise<Employee[]> {
     let result = await db.select().from(employees);
-    result = result.map((employee) => ({
-      ...employee,
-      salary: employee.salary ? decrypt(employee.salary) : null,
-      idNumber: employee.idNumber ? decrypt(employee.idNumber) : null,
-    }));
+    result = result.map((employee) => decryptFieldInObject(employee));
     return result;
   }
 
@@ -19,29 +19,18 @@ export class EmployeeService {
       .select()
       .from(employees)
       .where(eq(employees.id, id));
-    return result[0] || null;
+    return decryptFieldInObject(result[0]) || null;
   }
 
   async create(data: NewEmployee): Promise<void> {
-    const encryptedData = {
-      ...data,
-      salary: data.salary ? encrypt(data.salary) : undefined,
-      idNumber: data.idNumber ? encrypt(data.idNumber) : undefined,
-      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
-    };
-
-    await db.insert(employees).values(encryptedData);
+    await db.insert(employees).values(encryptFieldInObject(data));
   }
 
   async update(id: number, data: Partial<NewEmployee>): Promise<void> {
-    const encryptedData = {
-      ...data,
-      salary: data.salary ? encrypt(data.salary) : undefined,
-      idNumber: data.idNumber ? encrypt(data.idNumber) : undefined,
-      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
-    };
-
-    await db.update(employees).set(encryptedData).where(eq(employees.id, id));
+    await db
+      .update(employees)
+      .set(encryptFieldInObject(data))
+      .where(eq(employees.id, id));
   }
 
   async delete(id: number): Promise<void> {

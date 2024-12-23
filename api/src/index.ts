@@ -9,7 +9,6 @@ async function main() {
   // await runSeed();
   app.use(cors());
   app.use(express.json());
-
   app.use('/api', employeeRoutes);
   app.use('/api', authRoutes);
 

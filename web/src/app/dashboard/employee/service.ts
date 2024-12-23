@@ -14,6 +14,9 @@ export const EmployeeSchema = z.object({
   salary: z.number(),
   idNumber: z.string(),
   address: z.string(),
+  joinYear: z.date(),
+  experienceYears: z.number(),
+  gender: z.boolean(),
   dateOfBirth: z.date(),
 });
 
@@ -27,6 +30,9 @@ export const TableEmployeeSchema = z.object({
   salary: z.number(),
   idNumber: z.string(),
   address: z.string(),
+  joinYear: z.date(),
+  experienceYears: z.number(),
+  gender: z.boolean(),
   dateOfBirth: z.date(),
 });
 
