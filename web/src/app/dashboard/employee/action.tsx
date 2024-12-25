@@ -12,43 +12,19 @@ import {
 } from "../../../components/ui/dialog";
 import { useToast } from "../../../hooks/use-toast";
 import useEmployeeStore from "../../../store/store";
-import {
-  deleteEmployee,
-  Employee,
-  TableEmployee,
-  updateEmployee,
-} from "./service";
+import { deleteEmployee, Employee } from "./service";
 
 interface ActionButtonsProps {
   employee: Employee;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
-  const { updateEmployeeState, deleteEmployeeState } = useEmployeeStore();
+  const { deleteEmployeeState } = useEmployeeStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleSave = async (updatedEmployee: TableEmployee) => {
-    try {
-      await updateEmployee(updatedEmployee);
-      updatedEmployee = { ...updatedEmployee, id: employee.id };
-      updateEmployeeState(updatedEmployee as Employee);
-      setIsEditSheetOpen(false);
-      toast({
-        title: "Success",
-        description: "Employee updated successfully!",
-      });
-    } catch {
-      setIsEditSheetOpen(false);
-      toast({
-        title: "Error",
-        description: "Failed to update employee!",
-        variant: "destructive",
-      });
-    }
-  };
   const handleDelete = async () => {
     try {
       await deleteEmployee(employee.id);
@@ -125,7 +101,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
         <EditSheet
           employee={employee}
           onClose={() => setIsEditSheetOpen(false)}
-          onSave={handleSave}
           title="Update Employee"
           description="Update employee information below."
         />

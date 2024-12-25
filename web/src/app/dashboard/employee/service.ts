@@ -60,7 +60,6 @@ api.interceptors.request.use(async (config) => {
 
 clientApi.interceptors.request.use(async (config) => {
   const session = await getSession();
-  console.log(session);
   const token = session?.accessToken;
 
   if (token) {
@@ -93,26 +92,25 @@ export async function fetchEmployeesClient(): Promise<Employee[]> {
   }
 }
 
-export async function createEmployee(employee: TableEmployee): Promise<void> {
+export async function createEmployee(employee: TableEmployee) {
   try {
-    await clientApi.post("/employees", {
-      ...employee,
-      salary: employee.salary.toString(),
-    });
+    return await clientApi.post("/employees", employee);
   } catch (error) {
-    console.error("Failed to create employee:", error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data;
+    }
+    return error;
   }
 }
 
-export async function updateEmployee(employee: TableEmployee): Promise<void> {
+export async function updateEmployee(employee: TableEmployee) {
   try {
-    console.log(employee);
-    await clientApi.put(`/employees/${employee.id}`, {
-      ...employee,
-      salary: employee.salary.toString(),
-    });
+    return await clientApi.put(`/employees/${employee.id}`, employee);
   } catch (error) {
-    console.error("Failed to update employee:", error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data;
+    }
+    return error;
   }
 }
 

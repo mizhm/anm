@@ -21,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
 import { FileDown, UserPlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import EditSheet from "../../../components/form-sheet";
@@ -29,12 +28,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import useEmployeeStore from "../../../store/store";
 import { exportToExcel } from "../../../utils/export-to-excel";
-import {
-  createEmployee,
-  Employee,
-  fetchEmployeesClient,
-  TableEmployee,
-} from "./service";
+import { Employee } from "./service";
 
 interface DataTableProps {
   columns: ColumnDef<Employee, unknown>[];
@@ -75,26 +69,6 @@ export function DataTable({ columns, initData }: DataTableProps) {
     },
   });
 
-  const { toast } = useToast();
-
-  const handleSave = async (newEmployee: TableEmployee) => {
-    try {
-      await createEmployee(newEmployee);
-      toast({
-        title: "Success",
-        description: "Employee created successfully!",
-      });
-      const updatedData = await fetchEmployeesClient();
-      setEmployees(updatedData);
-      setIsEditSheetOpen(false);
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to create employee!",
-        variant: "destructive",
-      });
-    }
-  };
   return (
     <div className="w-full">
       <div className="flex items-center py-4 gap-2 w-full">
@@ -110,7 +84,6 @@ export function DataTable({ columns, initData }: DataTableProps) {
         {isEditSheetOpen && (
           <EditSheet
             onClose={() => setIsEditSheetOpen(false)}
-            onSave={handleSave}
             title="Add Employee"
             description="Add a new employee to the database."
           />

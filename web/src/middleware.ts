@@ -4,10 +4,13 @@ import { NextResponse } from "next/server";
 export default withAuth(
   function middleware(req) {
     // Get token from auth
-    const token = req.nextauth.token;
+    const token = req.nextauth.token as { exp?: number };
     const { searchParams } = req.nextUrl;
     const callbackUrl = searchParams.get("callbackUrl");
 
+    if (token?.exp && Date.now() >= token.exp * 1000) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
     if (token && req.nextUrl.pathname === "/login") {
       const redirectUrl = callbackUrl || "/dashboard";
       return NextResponse.redirect(new URL(redirectUrl, req.url));
@@ -27,7 +30,6 @@ export default withAuth(
         if (req.nextUrl.pathname === "/login" && !token) {
           return true;
         }
-        // Require auth for other routes
         return !!token;
       },
     },

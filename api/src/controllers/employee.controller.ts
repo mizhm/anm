@@ -27,18 +27,37 @@ export const employeeController = {
 
   async create(req: Request, res: Response) {
     try {
-      await employeeService.create(req.body);
-      res.json({ message: 'Employee created successfully' });
+      const result = await employeeService.create(req.body);
+
+      if (result.errors) {
+        res.status(400).json({
+          errors: result.errors,
+          message: 'Validation failed',
+        });
+      } else {
+        res.status(201).json({ message: 'Employee created successfully' });
+      }
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Failed to create employee' + error });
+      res.status(500).json({
+        errors: [{ message: 'Failed to create employee' }],
+      });
     }
   },
 
   async update(req: Request, res: Response) {
     try {
-      await employeeService.update(parseInt(req.params.id), req.body);
-      res.json({ message: 'Employee updated successfully' });
+      const result = await employeeService.update(
+        parseInt(req.params.id),
+        req.body,
+      );
+      if (result.errors) {
+        res.status(400).json({
+          errors: result.errors,
+          message: 'Validation failed',
+        });
+      } else {
+        res.status(201).json({ message: 'Employee updated successfully' });
+      }
     } catch (error) {
       res.status(500).json({ error: 'Failed to update employee' });
     }

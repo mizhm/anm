@@ -5,7 +5,12 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Employee, TableEmployee } from "../app/dashboard/employee/service";
+import {
+  createEmployee,
+  Employee,
+  updateEmployee,
+} from "../app/dashboard/employee/service";
+import { useToast } from "../hooks/use-toast";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
@@ -33,38 +38,50 @@ interface EditSheetProps {
   title: string;
   description: string;
   onClose: () => void;
-  onSave: (employee: TableEmployee) => Promise<void>;
 }
+
+const currentYear = new Date().getFullYear();
 
 const formSchema = z.object({
   id: z.number().nullable(),
-  fullName: z.string().nonempty("Name is required"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
   gender: z.coerce.boolean(),
-  joinYear: z.date({
-    required_error: "Join year is required",
-  }),
+  joinYear: z
+    .date({
+      required_error: "Date of birth is required",
+    })
+    .refine(
+      (date) => date.getFullYear() >= 1900 && date.getFullYear() <= currentYear,
+      {
+        message: `Join year must be between 1900 and ${currentYear}`,
+      }
+    ),
   experienceYears: z.coerce
     .number()
-    .positive("Experience years must be a positive number"),
+    .min(0, "Experience years must be at least 0"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().nonempty("Phone number is required"),
-  position: z.string().nonempty("Position is required"),
-  department: z.string().nonempty("Department is required"),
+  phone: z.string().regex(/^[0-9]{10,11}$/, "Phone must be 10-11 digits"),
+  position: z.string().min(2, "Position is required"),
+  department: z.string().min(2, "Department is required"),
   salary: z.coerce.number().positive("Salary must be a positive number"),
-  idNumber: z.string().nonempty("ID number is required"),
-  address: z.string().nonempty("Address is required"),
-  dateOfBirth: z.date({
-    required_error: "Date of birth is required",
-  }),
+  idNumber: z.string().min(9, "ID number must be at least 9 characters"),
+  address: z.string().min(5, "Address must be at least 5 characters"),
+  dateOfBirth: z
+    .date({
+      required_error: "Date of birth is required",
+    })
+    .refine(
+      (date) => {
+        const year = date.getFullYear();
+        return year >= 1900 && year <= currentYear - 18;
+      },
+      {
+        message: "Employee must be at least 18 years old and born after 1900",
+      }
+    ),
 });
 
-function EditSheet({
-  employee,
-  onClose,
-  title,
-  description,
-  onSave,
-}: EditSheetProps) {
+function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,6 +103,41 @@ function EditSheet({
     },
   });
 
+  const { toast } = useToast();
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const res = employee
+        ? await updateEmployee(data)
+        : await createEmployee(data);
+      console.log(res);
+      if (res.errors) {
+        console.log(res.errors);
+        res.errors.forEach((error: { field: string; message: string }) => {
+          form.setError(error.field as keyof (typeof formSchema)["_type"], {
+            type: "manual",
+            message: error.message,
+          });
+        });
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Some field is invalid!",
+        });
+        return;
+      }
+      toast({
+        title: "Success",
+        description: "Employee saved successfully!",
+      });
+      onClose();
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something wrong happen",
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <Sheet open={true} onOpenChange={onClose}>
       <SheetContent>
@@ -94,7 +146,7 @@ function EditSheet({
           <SheetDescription>{description}</SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSave)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <input type="hidden" {...form.register("id")} />
             <FormField
               control={form.control}

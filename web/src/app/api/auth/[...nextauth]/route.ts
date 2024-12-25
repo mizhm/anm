@@ -23,6 +23,7 @@ export const authOptions = {
   },
   session: {
     strategy: "jwt" as const,
+    maxAge: 1000 * 60 * 60 * 24, // 24 hours
   },
   providers: [
     CredentialsProvider({

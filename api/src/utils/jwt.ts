@@ -7,7 +7,7 @@ interface UserPayLoad {
   username: string;
 }
 export function generateToken(user: UserPayLoad) {
-  return jwt.sign(user, SECRET_KEY, { expiresIn: '1h' });
+  return jwt.sign(user, SECRET_KEY, { expiresIn: '1d' });
 }
 
 export function verifyToken(token: string) {
