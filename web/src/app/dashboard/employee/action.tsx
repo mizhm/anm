@@ -1,15 +1,42 @@
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Edit, Eye, Trash } from "lucide-react";
+import { format } from "date-fns";
+import {
+  AlertTriangle,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  Calendar,
+  Contact,
+  CreditCard,
+  Edit,
+  Eye,
+  Globe2,
+  GraduationCap,
+  Mail,
+  Phone,
+  Trash,
+  User2,
+} from "lucide-react";
 import React, { useState } from "react";
-import EditSheet from "../../../components/form-sheet";
+import FormSheet from "../../../components/dashboard/employee/form-sheet";
+import { Badge } from "../../../components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../../../components/ui/dialog";
+import { ScrollArea } from "../../../components/ui/scroll-area";
+import { Separator } from "../../../components/ui/separator";
 import { useToast } from "../../../hooks/use-toast";
 import useEmployeeStore from "../../../store/store";
 import { deleteEmployee, Employee } from "./service";
@@ -57,32 +84,157 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
             <Eye className="h-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-lg p-6 bg-white rounded-lg shadow-lg">
-          <DialogTitle className="text-lg font-semibold text-gray-900">
-            Employee Information
-          </DialogTitle>
-          <DialogDescription className="mt-2 text-sm text-gray-600">
-            <div>
-              <strong>ID:</strong> {employee.id}
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <User2 className="h-6 w-6 text-primary" />
+              Employee Profile
+            </DialogTitle>
+            <Separator className="my-4" />
+          </DialogHeader>
+          <ScrollArea className="h-[600px] pr-4">
+            <div className="grid gap-6">
+              {/* Personal Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Contact className="h-5 w-5 text-primary" />
+                    Personal Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Employee ID
+                    </div>
+                    <div className="font-medium">{employee.id}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Full Name
+                    </div>
+                    <div className="font-medium">{employee.fullName}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">Gender</div>
+                    <Badge variant={employee.gender ? "default" : "secondary"}>
+                      {employee.gender ? "Male" : "Female"}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Date of Birth
+                    </div>
+                    <div className="font-medium flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      {format(new Date(employee.dateOfBirth), "PPP")}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Globe2 className="h-5 w-5 text-primary" />
+                    Contact Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">Email</div>
+                    <div className="font-medium flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-primary" />
+                      {employee.email}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">Phone</div>
+                    <div className="font-medium flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-primary" />
+                      {employee.phone}
+                    </div>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <div className="text-sm text-muted-foreground">Address</div>
+                    <div className="font-medium">{employee.address}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Employment Details */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-primary" />
+                    Employment Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Position
+                    </div>
+                    <Badge variant="outline" className="font-medium">
+                      {employee.position}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Department
+                    </div>
+                    <div className="font-medium flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-primary" />
+                      {employee.department}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Experience
+                    </div>
+                    <div className="font-medium flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4 text-primary" />
+                      {employee.experienceYears} years
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      Join Date
+                    </div>
+                    <div className="font-medium flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      {format(new Date(employee.joinYear), "PPP")}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">
+                      ID Number
+                    </div>
+                    <div className="font-medium flex items-center gap-2">
+                      <BadgeCheck className="h-4 w-4 text-primary" />
+                      {employee.idNumber}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm text-muted-foreground">Salary</div>
+                    <div className="font-medium flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-primary" />
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(Number(employee.salary))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            <div>
-              <strong>Full Name:</strong> {employee.fullName}
-            </div>
-            <div>
-              <strong>Email:</strong> {employee.email}
-            </div>
-            <div>
-              <strong>Position:</strong> {employee.position}
-            </div>
-            <div>
-              <strong>Salary:</strong> {employee.salary}
-            </div>
-          </DialogDescription>
-          <DialogFooter className="mt-4 flex justify-end space-x-2">
+          </ScrollArea>
+          <Separator className="my-4" />
+          <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setIsViewDialogOpen(false)}
-              className="text-gray-700 border-gray-300 hover:bg-gray-100"
             >
               Close
             </Button>
@@ -98,7 +250,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ employee }) => {
         <Edit className="h-4 w-4" />
       </Button>
       {isEditSheetOpen && (
-        <EditSheet
+        <FormSheet
           employee={employee}
           onClose={() => setIsEditSheetOpen(false)}
           title="Update Employee"

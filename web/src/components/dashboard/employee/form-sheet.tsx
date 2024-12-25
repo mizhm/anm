@@ -7,11 +7,11 @@ import {
   createEmployee,
   Employee,
   updateEmployee,
-} from "../app/dashboard/employee/service";
-import { useToast } from "../hooks/use-toast";
-import useEmployeeStore from "../store/store";
-import { DatePicker } from "./date-picker";
-import { Button } from "./ui/button";
+} from "../../../app/dashboard/employee/service";
+import { useToast } from "../../../hooks/use-toast";
+import useEmployeeStore from "../../../store/store";
+import { DatePicker } from "../../date-picker";
+import { Button } from "../../ui/button";
 import {
   Form,
   FormControl,
@@ -19,18 +19,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "./ui/sheet";
-import { Textarea } from "./ui/textarea";
-interface EditSheetProps {
+} from "../../ui/sheet";
+import { Textarea } from "../../ui/textarea";
+interface FormSheetProps {
   employee?: Employee;
   title: string;
   description: string;
@@ -78,7 +78,7 @@ const formSchema = z.object({
     ),
 });
 
-function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
+function FormSheet({ employee, onClose, title, description }: FormSheetProps) {
   const { addEmployee, updateEmployeeState } = useEmployeeStore();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -337,4 +337,4 @@ function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
   );
 }
 
-export default EditSheet;
+export default FormSheet;

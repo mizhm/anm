@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import { FileDown, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
-import EditSheet from "../../../components/form-sheet";
+import FormSheet from "../../../components/dashboard/employee/form-sheet";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import useEmployeeStore from "../../../store/store";
@@ -107,7 +107,7 @@ export function DataTable({ columns, initData }: DataTableProps) {
           Add new employee
         </Button>
         {isEditSheetOpen && (
-          <EditSheet
+          <FormSheet
             onClose={() => setIsEditSheetOpen(false)}
             title="Add Employee"
             description="Add a new employee to the database."
