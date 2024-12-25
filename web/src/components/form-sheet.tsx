@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -11,9 +9,9 @@ import {
   updateEmployee,
 } from "../app/dashboard/employee/service";
 import { useToast } from "../hooks/use-toast";
-import { cn } from "../lib/utils";
+import useEmployeeStore from "../store/store";
+import { DatePicker } from "./date-picker";
 import { Button } from "./ui/button";
-import { Calendar } from "./ui/calendar";
 import {
   Form,
   FormControl,
@@ -23,7 +21,6 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import {
   Sheet,
@@ -82,6 +79,7 @@ const formSchema = z.object({
 });
 
 function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
+  const { addEmployee, updateEmployeeState } = useEmployeeStore();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -124,6 +122,12 @@ function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
           description: "Some field is invalid!",
         });
         return;
+      }
+      if (employee) {
+        updateEmployeeState(data as Employee);
+      } else {
+        data.id = res.data.returnId;
+        addEmployee(data as Employee);
       }
       toast({
         title: "Success",
@@ -290,37 +294,7 @@ function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <DatePicker date={field.value} setDate={field.onChange} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -331,37 +305,7 @@ function EditSheet({ employee, onClose, title, description }: EditSheetProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Join year</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <DatePicker date={field.value} setDate={field.onChange} />
                     <FormMessage />
                   </FormItem>
                 )}

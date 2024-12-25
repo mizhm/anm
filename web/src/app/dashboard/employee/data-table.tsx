@@ -2,15 +2,12 @@
 
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table";
 
 import {
@@ -22,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FileDown, UserPlus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import EditSheet from "../../../components/form-sheet";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -36,36 +33,64 @@ interface DataTableProps {
 }
 
 export function DataTable({ columns, initData }: DataTableProps) {
-  const { employees, setEmployees } = useEmployeeStore();
+  const {
+    employees,
+    sorting,
+    columnFilters,
+    columnVisibility,
+    pageIndex,
+    pageSize,
+    setEmployees,
+    setSorting,
+    setColumnFilters,
+    setColumnVisibility,
+    setPageIndex,
+    setPageSize,
+  } = useEmployeeStore();
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
 
   useEffect(() => {
     setEmployees(initData);
   }, [setEmployees, initData]);
 
   const table = useReactTable({
-    data: employees,
+    data: employees.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize),
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    manualPagination: true,
+    pageCount: Math.ceil(employees.length / pageSize),
+    onSortingChange: (updater) => {
+      setSorting(typeof updater === "function" ? updater(sorting) : updater);
+    },
+    onColumnFiltersChange: (updater) => {
+      setColumnFilters(
+        typeof updater === "function" ? updater(columnFilters) : updater
+      );
+    },
+    onPaginationChange: (updater) => {
+      const newPagination =
+        typeof updater === "function"
+          ? updater({ pageIndex, pageSize })
+          : updater;
+      setPageIndex(newPagination.pageIndex);
+      setPageSize(newPagination.pageSize);
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: (updater) => {
+      setColumnVisibility(
+        typeof updater === "function" ? updater(columnVisibility) : updater
+      );
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
   });
 
@@ -159,10 +184,6 @@ export function DataTable({ columns, initData }: DataTableProps) {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"

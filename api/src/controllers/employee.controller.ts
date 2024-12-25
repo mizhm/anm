@@ -35,7 +35,10 @@ export const employeeController = {
           message: 'Validation failed',
         });
       } else {
-        res.status(201).json({ message: 'Employee created successfully' });
+        res.status(201).json({
+          returnId: result.id,
+          message: 'Employee created successfully',
+        });
       }
     } catch (error) {
       res.status(500).json({

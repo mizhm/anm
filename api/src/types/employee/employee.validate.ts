@@ -3,18 +3,25 @@ import { db } from '../../db';
 import { employees } from '../../db/schema';
 import { decrypt } from '../../utils/encryption';
 
-const checkUniqueEmail = async (email: string, id?: number) => {
-  const emailsInDB = await db
-    .select({ id: employees.id, email: employees.email })
-    .from(employees);
-  return !emailsInDB.some((e) => decrypt(e.email) === email && e.id !== id);
+const checkUniqueEmail = async (email: string, id?: number | null) => {
+  if (id) {
+    const emailsInDB = await db
+      .select({ id: employees.id, email: employees.email })
+      .from(employees);
+    return !emailsInDB.some((e) => decrypt(e.email) === email && e.id !== id);
+  } else {
+    const emailsInDB = await db
+      .select({ email: employees.email })
+      .from(employees);
+    return !emailsInDB.some((e) => decrypt(e.email) === email);
+  }
 };
 
 const currentYear = new Date().getFullYear();
 
 export const employeeValidateSchema = z
   .object({
-    id: z.number().optional(),
+    id: z.number().optional().nullable(),
     fullName: z.string().min(2, 'Full name must be at least 2 characters'),
     email: z.string().email('Invalid email format'),
     phone: z.string().regex(/^[0-9]{10,11}$/, 'Phone must be 10-11 digits'),

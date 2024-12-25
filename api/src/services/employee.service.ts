@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { db } from '../db';
 import { Employee, employees, NewEmployee } from '../db/schema';
 import { employeeValidateSchema } from '../types/employee/employee.validate';
@@ -11,7 +11,7 @@ import {
 //TODO: fix service for adapting new field in db
 export class EmployeeService {
   async findAll(): Promise<Employee[]> {
-    let result = await db.select().from(employees);
+    let result = await db.select().from(employees).orderBy(desc(employees.id));
     result = result.map((employee) => decryptFieldInObject(employee));
     return result;
   }
@@ -24,7 +24,9 @@ export class EmployeeService {
     return decryptFieldInObject(result[0]) || null;
   }
 
-  async create(data: NewEmployee): Promise<{ errors?: ValidateError[] }> {
+  async create(
+    data: NewEmployee,
+  ): Promise<{ id?: number; errors?: ValidateError[] }> {
     try {
       const validation = await employeeValidateSchema.safeParseAsync(data);
 
@@ -39,8 +41,11 @@ export class EmployeeService {
         };
       }
 
-      await db.insert(employees).values(encryptFieldInObject(validation.data));
-      return {};
+      const returnId = await db
+        .insert(employees)
+        .values(encryptFieldInObject(validation.data))
+        .$returningId();
+      return { id: returnId[0].id };
     } catch (error) {
       return {
         errors: [{ message: 'Failed to create employee' }],
