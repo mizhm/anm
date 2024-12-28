@@ -48,6 +48,9 @@ export async function runSeed() {
       fullName: 'User',
     },
   ];
+  await db.delete(users);
   await db.insert(users).values(userData);
   console.log('Seeding completed.');
 }
+
+runSeed().then(() => process.exit(0));
