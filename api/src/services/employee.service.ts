@@ -13,6 +13,7 @@ export class EmployeeService {
   async findAll(): Promise<Employee[]> {
     let result = await db.select().from(employees).orderBy(desc(employees.id));
     result = result.map((employee) => decryptFieldInObject(employee));
+    // console.log(result);
     return result;
   }
 
